@@ -9,8 +9,8 @@ export class User extends Model {
     name: string;
 
     @Column
-    age: number;
+    email: string;
     
     @Column
-    breed: string;
+    password: string;
 }
