@@ -1,5 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('env2')('.env');
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export default () => ({
     database: {

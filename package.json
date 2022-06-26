@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "migrate": "ts-node node_modules/.bin/sequelize db:migrate",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -62,6 +63,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "28.0.3",
     "prettier": "^2.3.2",
+    "sequelize-cli": "^5.5.1",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
     "ts-jest": "28.0.1",

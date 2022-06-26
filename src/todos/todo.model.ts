@@ -1,4 +1,5 @@
-import { Table, Column, Model } from "sequelize-typescript";
+import { Table, Column, Model, ForeignKey } from "sequelize-typescript";
+import { User } from "../users/user.model";
 
 @Table
 export class Todo extends Model {
@@ -13,4 +14,8 @@ export class Todo extends Model {
     
     @Column
     status: boolean;
+    
+    
+    @ForeignKey( () => User )
+    user_id: number
 }

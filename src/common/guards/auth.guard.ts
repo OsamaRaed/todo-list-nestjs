@@ -2,9 +2,9 @@ import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { verify } from "jsonwebtoken";
 
-import * as dotenv from "dotenv";
-import { UsersService } from "../users/users.service";
+import { UsersService } from "../../users/users.service";
 
+import * as dotenv from "dotenv";
 dotenv.config();
 
 @Injectable()

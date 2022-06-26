@@ -1,14 +1,13 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/sequelize";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Todo } from "./todo.model";
-import { CreateTodoDto } from "./dto/createTodoDto";
+import { CreateTodoDto } from "./dto/create-todo.dto";
+import { PROVIDERS } from "../common/enums/providers";
 
 
 @Injectable()
 export class TodoService {
     constructor(
-        @InjectModel(Todo)
-        private todoModel: typeof Todo
+        @Inject(PROVIDERS.TODO) private readonly todoModel: typeof Todo
     ) {
     }
     

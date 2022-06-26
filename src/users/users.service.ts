@@ -1,24 +1,25 @@
-import { ConflictException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/sequelize";
+import { ConflictException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { User } from "./user.model";
 import * as bcrypt from "bcrypt";
-import { SignupDto } from "../auth/dto/signupDto";
+import { sign } from "jsonwebtoken";
+import { compare } from "bcrypt";
 
+import * as dotenv from 'dotenv';
+
+import { LoginDto } from "./dto/login.dto";
+import { SignUpDto } from "./dto/sign-up.dto";
+import { PROVIDERS } from "../common/enums/providers";
+
+dotenv.config();
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel(User)
-        private userModel: typeof User
+        @Inject(PROVIDERS.USER) private readonly userModel: typeof User
     ) {
     }
     
     async findOne(email: string): Promise<User> {
-        // console.log(await this.userModel.findOne({
-        //     where: {
-        //         email: email
-        //     }
-        // }))
         return await this.userModel.findOne({
             where: {
                 email: email
@@ -26,16 +27,55 @@ export class UsersService {
         });
     }
     
-    async create(user: SignupDto): Promise<void> {
+    async create(user: SignUpDto): Promise<void> {
         const existed = await this.findOne(user.email);
         if(existed){
             throw new ConflictException()
         }
         const hash = await bcrypt.hash(user.password, 10);
-        const createdUser = await this.userModel.create({
+        await this.userModel.create({
             name: user.name,
             email: user.email,
             password: hash
         });
     }
+    
+    
+    
+    async validateUser(email: string, pass: string): Promise<any> {
+        const user = await this.findOne(email);
+        let valid = false;
+        if (user) {
+            valid = await this.comparePassword(pass, user.password)
+        }
+        return valid;
+    }
+    
+    async login(user: LoginDto) {
+        const payload = { email: user.email };
+        const findUser = this.validateUser(user.email, user.password);
+        console.log(findUser);
+
+        if (!findUser) {
+            throw new UnauthorizedException();
+        }
+        return {
+            access_token: sign(payload, process.env.JWT_SECRET)
+        };
+    }
+    
+    async signup(user: any) {
+        const payload = { name: user.name, email: user.email, password: user.password };
+        await this.create(payload);
+        return {
+            message: "user created"
+        };
+    }
+    
+    private comparePassword = (
+        password: string,
+        hash: string,
+    ): Promise<boolean> => {
+        return compare(password, hash);
+    };
 }
